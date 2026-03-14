@@ -1,37 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Our Love Journey</title>
+<title>Our Love Game ❤️</title>
 
 <style>
 
 body{
-font-family: Arial;
-text-align:center;
-background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+font-family:Arial;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 color:white;
+text-align:center;
 height:100vh;
 margin:0;
 display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
+overflow:hidden;
 }
 
-.screen{
+.level{
 display:none;
 }
 
 button{
-padding:15px 25px;
+padding:14px 26px;
 font-size:18px;
 border:none;
 border-radius:20px;
 background:#ff4d6d;
 color:white;
 cursor:pointer;
-margin-top:20px;
+margin:10px;
 }
 
 button:hover{
@@ -39,7 +40,7 @@ background:#ff1e4d;
 }
 
 h1{
-font-size:40px;
+font-size:36px;
 }
 
 .heart{
@@ -54,61 +55,80 @@ animation:float 6s linear infinite;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <audio id="music" src="music.mp3"></audio>
 
-<!-- Welcome Screen -->
-<div id="screen1" class="screen" style="display:block;">
-<h1>Welcome Rena ❤️</h1>
-<p>This little game is about us.</p>
-<button onclick="startGame()">Start Our Love Journey</button>
+<!-- LEVEL 1 -->
+<div id="level1" class="level" style="display:block;">
+<h1>Level 1 ❤️</h1>
+<p>Welcome Rena</p>
+<p>This little game is about our love.</p>
+
+<button onclick="startGame()">Start Our Journey</button>
 </div>
 
-<!-- Question Screen -->
-<div id="screen2" class="screen">
-<h1>Question 💭</h1>
+
+<!-- LEVEL 2 -->
+<div id="level2" class="level">
+
+<h1>Level 2 💭</h1>
 <p>What makes me happiest?</p>
 
-<button onclick="answer()">Your smile</button>
-<button onclick="answer()">Your voice</button>
-<button onclick="answer()">Being with you</button>
+<button onclick="correct()">Your smile</button>
+<button onclick="correct()">Your voice</button>
+<button onclick="correct()">Being with you</button>
 
 </div>
 
-<!-- Compliment Screen -->
-<div id="screen3" class="screen">
-<h1>A message for you 💌</h1>
-<p id="compliment"></p>
 
-<button onclick="nextGame()">Next</button>
+<!-- LEVEL 3 -->
+<div id="level3" class="level">
+
+<h1>Level 3 💌</h1>
+
+<p id="message"></p>
+
+<button onclick="nextLevel()">Next Level</button>
+
 </div>
 
-<!-- Heart Game -->
-<div id="screen4" class="screen">
-<h1>Find the Love ❤️</h1>
-<p>Click the heart!</p>
 
-<button onclick="final()">❤️</button>
+<!-- LEVEL 4 -->
+<div id="level4" class="level">
+
+<h1>Level 4 ❤️</h1>
+
+<p>Find the love heart!</p>
+
+<button onclick="win()">❤️</button>
+
 </div>
 
-<!-- Final Screen -->
-<div id="screen5" class="screen">
-<h1>My Final Message</h1>
+
+<!-- LEVEL 5 -->
+<div id="level5" class="level">
+
+<h1>Level 5 🌹</h1>
 
 <p style="font-size:22px;max-width:500px">
-Rena…  
+
+Rena...  
+
 In this big world,  
 my heart found its home in you.  
 
 This game is small,  
-but my love for you is endless. ❤️
+but my love for you is endless.  
+
+Thank you for being in my life. ❤️
+
 </p>
 
 </div>
+
 
 <script>
 
@@ -116,49 +136,54 @@ function startGame(){
 
 document.getElementById("music").play();
 
-document.getElementById("screen1").style.display="none";
-document.getElementById("screen2").style.display="block";
+document.getElementById("level1").style.display="none";
+document.getElementById("level2").style.display="block";
 
 }
 
-function answer(){
 
-document.getElementById("screen2").style.display="none";
-document.getElementById("screen3").style.display="block";
+function correct(){
 
-let messages = [
+document.getElementById("level2").style.display="none";
+document.getElementById("level3").style.display="block";
 
-"Your smile is my favorite place.",
-"You are the best part of my life.",
-"My heart feels peace when I'm with you.",
-"You are my dream come true.",
-"You are my home."
+let compliments=[
+
+"Your smile is my peace.",
+"You are my favorite person.",
+"My heart feels calm with you.",
+"You make my world beautiful.",
+"I am lucky to have you."
 
 ];
 
-let random = Math.floor(Math.random()*messages.length);
+let random=Math.floor(Math.random()*compliments.length);
 
-document.getElementById("compliment").innerText = messages[random];
-
-}
-
-function nextGame(){
-
-document.getElementById("screen3").style.display="none";
-document.getElementById("screen4").style.display="block";
+document.getElementById("message").innerText=compliments[random];
 
 }
 
-function final(){
 
-document.getElementById("screen4").style.display="none";
-document.getElementById("screen5").style.display="block";
+function nextLevel(){
+
+document.getElementById("level3").style.display="none";
+document.getElementById("level4").style.display="block";
 
 }
+
+
+function win(){
+
+document.getElementById("level4").style.display="none";
+document.getElementById("level5").style.display="block";
+
+}
+
 
 function createHeart(){
 
 let heart=document.createElement("div");
+
 heart.classList.add("heart");
 
 heart.innerHTML="❤️";
