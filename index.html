@@ -2,302 +2,125 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Our Love World</title>
-
+<title>Love Adventure Game ❤️</title>
 <style>
-
 body{
 margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-color:white;
-text-align:center;
 overflow:hidden;
+background:linear-gradient(to bottom,#ff9a9e,#fad0c4);
+font-family:Arial;
 }
-
-.screen{
-display:none;
-padding-top:100px;
+canvas{
+display:block;
+background:linear-gradient(to top,#ffd1dc,#ff9a9e);
 }
-
-button{
-padding:15px 30px;
-font-size:18px;
-border:none;
-border-radius:20px;
-background:#ff4d6d;
+#message{
+position:absolute;
+top:20px;
+width:100%;
+text-align:center;
 color:white;
-cursor:pointer;
-margin:10px;
+font-size:22px;
+text-shadow: 2px 2px 5px #000;
 }
-
-button:hover{
-background:#ff1e4d;
-}
-
-h1{
-font-size:40px;
-}
-
-.map{
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:40px;
-}
-
-.place{
-background:rgba(255,255,255,0.2);
-padding:25px;
-border-radius:20px;
-cursor:pointer;
-width:180px;
-}
-
-.place:hover{
-background:rgba(255,255,255,0.4);
-}
-
 .heart{
 position:fixed;
 font-size:25px;
 animation:float 6s linear infinite;
 }
-
 @keyframes float{
 0%{transform:translateY(100vh);}
 100%{transform:translateY(-10vh);}
 }
-
 </style>
 </head>
-
 <body>
-
-<audio id="music" src="music.mp3" loop></audio>
-
-<!-- WELCOME -->
-
-<div id="welcome" class="screen" style="display:block">
-
-<h1>Welcome to Our Love World ❤️</h1>
-
-<p>This world is built from our feelings.</p>
-
-<button onclick="startGame()">Enter Our World</button>
-
-</div>
-
-<!-- MAP -->
-
-<div id="map" class="screen">
-
-<h1>Love World Map 🌍</h1>
-
-<p>Choose a place to explore</p>
-
-<div class="map">
-
-<div class="place" onclick="memory()">🌸 Memory Garden</div>
-
-<div class="place" onclick="musicRoom()">🎵 Music Room</div>
-
-<div class="place" onclick="quiz()">🧠 Love Quiz</div>
-
-<div class="place" onclick="secret()">🔐 Secret Heart</div>
-
-</div>
-
-</div>
-
-<!-- MEMORY -->
-
-<div id="memory" class="screen">
-
-<h1>Memory Garden 🌸</h1>
-
-<p id="memoryText"></p>
-
-<button onclick="back()">Back to Map</button>
-
-</div>
-
-<!-- MUSIC ROOM -->
-
-<div id="musicRoom" class="screen">
-
-<h1>Heart Music Room 🎵</h1>
-
-<p>
-
-Close your eyes and listen...  
-Every moment with you feels like music to my heart.
-
-</p>
-
-<button onclick="back()">Back</button>
-
-</div>
-
-<!-- QUIZ -->
-
-<div id="quiz" class="screen">
-
-<h1>Love Quiz 🧠</h1>
-
-<p>What makes love special?</p>
-
-<button onclick="quizAnswer()">Trust</button>
-<button onclick="quizAnswer()">Care</button>
-<button onclick="quizAnswer()">Being together</button>
-
-</div>
-
-<!-- SECRET -->
-
-<div id="secret" class="screen">
-
-<h1>Secret Heart 🔐</h1>
-
-<p>Enter the password</p>
-
-<input id="pass" placeholder="Type password">
-
-<br><br>
-
-<button onclick="checkPass()">Unlock</button>
-
-<p id="secretMsg"></p>
-
-<button onclick="back()">Back</button>
-
-</div>
-
+<canvas id="gameCanvas"></canvas>
+<div id="message">Welcome to Our Love Adventure ❤️ Use arrow keys to move</div>
+<audio id="music" src="music.mp3" loop autoplay></audio>
 <script>
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-function startGame(){
-
-document.getElementById("music").play();
-
-document.getElementById("welcome").style.display="none";
-
-document.getElementById("map").style.display="block";
-
-}
-
-function hideAll(){
-
-let screens=document.querySelectorAll(".screen");
-
-screens.forEach(s=>s.style.display="none");
-
-}
-
-function memory(){
-
-hideAll();
-
-document.getElementById("memory").style.display="block";
-
-let memories=[
-
-"Our first conversation felt magical.",
-"Your smile changed my world.",
-"Every moment with you is my favorite.",
-"You are my happiest memory."
-
+let player={x:100,y:100,width:40,height:40,color:'red',speed:5};
+let keys={};
+let areas=[
+{x:300,y:100,width:120,height:120,type:'memory',message:'🌸 Memory: Our first conversation felt magical.'},
+{x:600,y:200,width:120,height:120,type:'music',message:'🎵 Music Room: Every moment with you is like music to my heart.'},
+{x:400,y:400,width:120,height:120,type:'quiz',message:'🧠 Quiz: Love is trust, care, and being together.'},
+{x:200,y:500,width:120,height:120,type:'secret',message:'🔐 Secret Heart: Unlocks when you type "love".'},
+{x:800,y:300,width:120,height:120,type:'end',message:'🌙 Ending: My heart is yours forever ❤️'}
 ];
 
-let random=Math.floor(Math.random()*memories.length);
+let messagesUnlocked=[];
 
-document.getElementById("memoryText").innerText=memories[random];
+window.addEventListener('keydown',e=>keys[e.key]=true);
+window.addEventListener('keyup',e=>keys[e.key]=false);
 
+function drawPlayer(){
+ctx.fillStyle=player.color;
+ctx.fillRect(player.x,player.y,player.width,player.height);
 }
 
-function musicRoom(){
-
-hideAll();
-
-document.getElementById("musicRoom").style.display="block";
-
+function drawAreas(){
+areas.forEach(a=>{
+ctx.fillStyle='rgba(255,255,255,0.3)';
+ctx.fillRect(a.x,a.y,a.width,a.height);
+ctx.fillStyle='white';
+ctx.font='18px Arial';
+ctx.fillText(a.type.toUpperCase(),a.x+10,a.y+30);
+});
 }
 
-function quiz(){
-
-hideAll();
-
-document.getElementById("quiz").style.display="block";
-
+function checkCollision(){
+areas.forEach(a=>{
+if(player.x< a.x + a.width &&
+player.x + player.width > a.x &&
+player.y < a.y + a.height &&
+player.y + player.height > a.y){
+if(!messagesUnlocked.includes(a.type)){
+messagesUnlocked.push(a.type);
+if(a.type==='secret'){
+let pass=prompt('Enter the secret password:');
+if(pass==='love'){
+document.getElementById('message').innerText=a.message;
+}else{
+document.getElementById('message').innerText='Wrong password 😢';
 }
-
-function quizAnswer(){
-
-alert("Correct ❤️ Love is all of these.");
-
-back();
-
+}else{
+document.getElementById('message').innerText=a.message;
 }
-
-function secret(){
-
-hideAll();
-
-document.getElementById("secret").style.display="block";
-
 }
-
-function checkPass(){
-
-let p=document.getElementById("pass").value;
-
-if(p=="love"){
-
-document.getElementById("secretMsg").innerText=
-
-"You unlocked my heart. I love you forever ❤️";
-
 }
-
-else{
-
-document.getElementById("secretMsg").innerText="Wrong password";
-
-}
-
-}
-
-function back(){
-
-hideAll();
-
-document.getElementById("map").style.display="block";
-
+});
 }
 
 function createHeart(){
-
-let heart=document.createElement("div");
-
-heart.classList.add("heart");
-
-heart.innerHTML="❤️";
-
-heart.style.left=Math.random()*100+"vw";
-
+let heart=document.createElement('div');
+heart.classList.add('heart');
+heart.innerHTML='❤️';
+heart.style.left=Math.random()*100+'vw';
 document.body.appendChild(heart);
-
-setTimeout(()=>{
-
-heart.remove();
-
-},6000);
-
+setTimeout(()=>heart.remove(),6000);
 }
-
 setInterval(createHeart,400);
 
-</script>
+function update(){
+if(keys['ArrowUp']) player.y-=player.speed;
+if(keys['ArrowDown']) player.y+=player.speed;
+if(keys['ArrowLeft']) player.x-=player.speed;
+if(keys['ArrowRight']) player.x+=player.speed;
 
+ctx.clearRect(0,0,canvas.width,canvas.height);
+drawAreas();
+drawPlayer();
+checkCollision();
+requestAnimationFrame(update);
+}
+
+update();
+</script>
 </body>
 </html>
