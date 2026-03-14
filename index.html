@@ -2,30 +2,26 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Our Love Game ❤️</title>
+<title>Our Love World</title>
 
 <style>
 
 body{
+margin:0;
 font-family:Arial;
 background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 color:white;
 text-align:center;
-height:100vh;
-margin:0;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
 overflow:hidden;
 }
 
-.level{
+.screen{
 display:none;
+padding-top:100px;
 }
 
 button{
-padding:14px 26px;
+padding:15px 30px;
 font-size:18px;
 border:none;
 border-radius:20px;
@@ -40,7 +36,27 @@ background:#ff1e4d;
 }
 
 h1{
-font-size:36px;
+font-size:40px;
+}
+
+.map{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:40px;
+}
+
+.place{
+background:rgba(255,255,255,0.2);
+padding:25px;
+border-radius:20px;
+cursor:pointer;
+width:180px;
+}
+
+.place:hover{
+background:rgba(255,255,255,0.4);
 }
 
 .heart{
@@ -59,76 +75,104 @@ animation:float 6s linear infinite;
 
 <body>
 
-<audio id="music" src="music.mp3"></audio>
+<audio id="music" src="music.mp3" loop></audio>
 
-<!-- LEVEL 1 -->
-<div id="level1" class="level" style="display:block;">
-<h1>Level 1 ❤️</h1>
-<p>Welcome Rena</p>
-<p>This little game is about our love.</p>
+<!-- WELCOME -->
 
-<button onclick="startGame()">Start Our Journey</button>
-</div>
+<div id="welcome" class="screen" style="display:block">
 
+<h1>Welcome to Our Love World ❤️</h1>
 
-<!-- LEVEL 2 -->
-<div id="level2" class="level">
+<p>This world is built from our feelings.</p>
 
-<h1>Level 2 💭</h1>
-<p>What makes me happiest?</p>
-
-<button onclick="correct()">Your smile</button>
-<button onclick="correct()">Your voice</button>
-<button onclick="correct()">Being with you</button>
+<button onclick="startGame()">Enter Our World</button>
 
 </div>
 
+<!-- MAP -->
 
-<!-- LEVEL 3 -->
-<div id="level3" class="level">
+<div id="map" class="screen">
 
-<h1>Level 3 💌</h1>
+<h1>Love World Map 🌍</h1>
 
-<p id="message"></p>
+<p>Choose a place to explore</p>
 
-<button onclick="nextLevel()">Next Level</button>
+<div class="map">
 
-</div>
+<div class="place" onclick="memory()">🌸 Memory Garden</div>
 
+<div class="place" onclick="musicRoom()">🎵 Music Room</div>
 
-<!-- LEVEL 4 -->
-<div id="level4" class="level">
+<div class="place" onclick="quiz()">🧠 Love Quiz</div>
 
-<h1>Level 4 ❤️</h1>
-
-<p>Find the love heart!</p>
-
-<button onclick="win()">❤️</button>
+<div class="place" onclick="secret()">🔐 Secret Heart</div>
 
 </div>
 
+</div>
 
-<!-- LEVEL 5 -->
-<div id="level5" class="level">
+<!-- MEMORY -->
 
-<h1>Level 5 🌹</h1>
+<div id="memory" class="screen">
 
-<p style="font-size:22px;max-width:500px">
+<h1>Memory Garden 🌸</h1>
 
-Rena...  
+<p id="memoryText"></p>
 
-In this big world,  
-my heart found its home in you.  
+<button onclick="back()">Back to Map</button>
 
-This game is small,  
-but my love for you is endless.  
+</div>
 
-Thank you for being in my life. ❤️
+<!-- MUSIC ROOM -->
+
+<div id="musicRoom" class="screen">
+
+<h1>Heart Music Room 🎵</h1>
+
+<p>
+
+Close your eyes and listen...  
+Every moment with you feels like music to my heart.
 
 </p>
 
+<button onclick="back()">Back</button>
+
 </div>
 
+<!-- QUIZ -->
+
+<div id="quiz" class="screen">
+
+<h1>Love Quiz 🧠</h1>
+
+<p>What makes love special?</p>
+
+<button onclick="quizAnswer()">Trust</button>
+<button onclick="quizAnswer()">Care</button>
+<button onclick="quizAnswer()">Being together</button>
+
+</div>
+
+<!-- SECRET -->
+
+<div id="secret" class="screen">
+
+<h1>Secret Heart 🔐</h1>
+
+<p>Enter the password</p>
+
+<input id="pass" placeholder="Type password">
+
+<br><br>
+
+<button onclick="checkPass()">Unlock</button>
+
+<p id="secretMsg"></p>
+
+<button onclick="back()">Back</button>
+
+</div>
 
 <script>
 
@@ -136,49 +180,100 @@ function startGame(){
 
 document.getElementById("music").play();
 
-document.getElementById("level1").style.display="none";
-document.getElementById("level2").style.display="block";
+document.getElementById("welcome").style.display="none";
+
+document.getElementById("map").style.display="block";
 
 }
 
+function hideAll(){
 
-function correct(){
+let screens=document.querySelectorAll(".screen");
 
-document.getElementById("level2").style.display="none";
-document.getElementById("level3").style.display="block";
+screens.forEach(s=>s.style.display="none");
 
-let compliments=[
+}
 
-"Your smile is my peace.",
-"You are my favorite person.",
-"My heart feels calm with you.",
-"You make my world beautiful.",
-"I am lucky to have you."
+function memory(){
+
+hideAll();
+
+document.getElementById("memory").style.display="block";
+
+let memories=[
+
+"Our first conversation felt magical.",
+"Your smile changed my world.",
+"Every moment with you is my favorite.",
+"You are my happiest memory."
 
 ];
 
-let random=Math.floor(Math.random()*compliments.length);
+let random=Math.floor(Math.random()*memories.length);
 
-document.getElementById("message").innerText=compliments[random];
-
-}
-
-
-function nextLevel(){
-
-document.getElementById("level3").style.display="none";
-document.getElementById("level4").style.display="block";
+document.getElementById("memoryText").innerText=memories[random];
 
 }
 
+function musicRoom(){
 
-function win(){
+hideAll();
 
-document.getElementById("level4").style.display="none";
-document.getElementById("level5").style.display="block";
+document.getElementById("musicRoom").style.display="block";
 
 }
 
+function quiz(){
+
+hideAll();
+
+document.getElementById("quiz").style.display="block";
+
+}
+
+function quizAnswer(){
+
+alert("Correct ❤️ Love is all of these.");
+
+back();
+
+}
+
+function secret(){
+
+hideAll();
+
+document.getElementById("secret").style.display="block";
+
+}
+
+function checkPass(){
+
+let p=document.getElementById("pass").value;
+
+if(p=="love"){
+
+document.getElementById("secretMsg").innerText=
+
+"You unlocked my heart. I love you forever ❤️";
+
+}
+
+else{
+
+document.getElementById("secretMsg").innerText="Wrong password";
+
+}
+
+}
+
+function back(){
+
+hideAll();
+
+document.getElementById("map").style.display="block";
+
+}
 
 function createHeart(){
 
@@ -193,7 +288,9 @@ heart.style.left=Math.random()*100+"vw";
 document.body.appendChild(heart);
 
 setTimeout(()=>{
+
 heart.remove();
+
 },6000);
 
 }
