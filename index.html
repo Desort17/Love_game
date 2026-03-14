@@ -2,124 +2,118 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Love Adventure Game ❤️</title>
+<title>Love Adventure Game with Bunny ❤️</title>
 <style>
-body{
-margin:0;
-overflow:hidden;
-background:linear-gradient(to bottom,#ff9a9e,#fad0c4);
-font-family:Arial;
-}
-canvas{
-display:block;
-background:linear-gradient(to top,#ffd1dc,#ff9a9e);
-}
-#message{
-position:absolute;
-top:20px;
-width:100%;
-text-align:center;
-color:white;
-font-size:22px;
-text-shadow: 2px 2px 5px #000;
-}
-.heart{
-position:fixed;
-font-size:25px;
-animation:float 6s linear infinite;
-}
-@keyframes float{
-0%{transform:translateY(100vh);}
-100%{transform:translateY(-10vh);}
-}
+body{margin:0;overflow:hidden;background:linear-gradient(to bottom,#ff9a9e,#fad0c4);}
+canvas{display:block;background:linear-gradient(to top,#ffd1dc,#ff9a9e);}
+#message{position:absolute;top:20px;width:100%;text-align:center;color:white;font-size:22px;text-shadow:2px 2px 5px #000;}
+.heart{position:fixed;font-size:25px;animation:float 6s linear infinite;}
+@keyframes float{0%{transform:translateY(100vh);}100%{transform:translateY(-10vh);}}
 </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
-<div id="message">Welcome to Our Love Adventure ❤️ Use arrow keys to move</div>
+<div id="message">Welcome to Our Love Adventure ❤️ Tap or use arrows to move the bunny</div>
 <audio id="music" src="music.mp3" loop autoplay></audio>
+
 <script>
 const canvas=document.getElementById('gameCanvas');
 const ctx=canvas.getContext('2d');
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
-let player={x:100,y:100,width:40,height:40,color:'red',speed:5};
+let player={
+  x:100,
+  y:100,
+  width:64,
+  height:64,
+  speed:5,
+  img:new Image(),
+  hop:0
+};
+player.img.src='bunny.png';
+
 let keys={};
 let areas=[
-{x:300,y:100,width:120,height:120,type:'memory',message:'🌸 Memory: Our first conversation felt magical.'},
-{x:600,y:200,width:120,height:120,type:'music',message:'🎵 Music Room: Every moment with you is like music to my heart.'},
-{x:400,y:400,width:120,height:120,type:'quiz',message:'🧠 Quiz: Love is trust, care, and being together.'},
-{x:200,y:500,width:120,height:120,type:'secret',message:'🔐 Secret Heart: Unlocks when you type "love".'},
-{x:800,y:300,width:120,height:120,type:'end',message:'🌙 Ending: My heart is yours forever ❤️'}
+  {x:300,y:100,width:120,height:120,type:'memory',message:'🌸 Memory: Our first conversation felt magical.'},
+  {x:600,y:200,width:120,height:120,type:'music',message:'🎵 Music Room: Every moment with you is like music to my heart.'},
+  {x:400,y:400,width:120,height:120,type:'quiz',message:'🧠 Quiz: Love is trust, care, and being together.'},
+  {x:200,y:500,width:120,height:120,type:'secret',message:'🔐 Secret Heart: Unlocks when you type "love".'},
+  {x:800,y:300,width:120,height:120,type:'end',message:'🌙 Ending: My heart is yours forever ❤️'}
 ];
 
 let messagesUnlocked=[];
-
 window.addEventListener('keydown',e=>keys[e.key]=true);
 window.addEventListener('keyup',e=>keys[e.key]=false);
 
+// Mobile tap/swipe
+canvas.addEventListener('click',e=>{
+  let rect=canvas.getBoundingClientRect();
+  player.x=e.clientX-32;
+  player.y=e.clientY-32;
+});
+
 function drawPlayer(){
-ctx.fillStyle=player.color;
-ctx.fillRect(player.x,player.y,player.width,player.height);
+  player.hop=Math.sin(Date.now()/200)*5;
+  ctx.drawImage(player.img,player.x,player.y+player.hop,player.width,player.height);
 }
 
 function drawAreas(){
-areas.forEach(a=>{
-ctx.fillStyle='rgba(255,255,255,0.3)';
-ctx.fillRect(a.x,a.y,a.width,a.height);
-ctx.fillStyle='white';
-ctx.font='18px Arial';
-ctx.fillText(a.type.toUpperCase(),a.x+10,a.y+30);
-});
+  areas.forEach(a=>{
+    ctx.fillStyle='rgba(255,255,255,0.3)';
+    ctx.fillRect(a.x,a.y,a.width,a.height);
+    ctx.fillStyle='white';
+    ctx.font='18px Arial';
+    ctx.fillText(a.type.toUpperCase(),a.x+10,a.y+30);
+  });
 }
 
 function checkCollision(){
-areas.forEach(a=>{
-if(player.x< a.x + a.width &&
-player.x + player.width > a.x &&
-player.y < a.y + a.height &&
-player.y + player.height > a.y){
-if(!messagesUnlocked.includes(a.type)){
-messagesUnlocked.push(a.type);
-if(a.type==='secret'){
-let pass=prompt('Enter the secret password:');
-if(pass==='love'){
-document.getElementById('message').innerText=a.message;
-}else{
-document.getElementById('message').innerText='Wrong password 😢';
-}
-}else{
-document.getElementById('message').innerText=a.message;
-}
-}
-}
-});
+  areas.forEach(a=>{
+    if(player.x< a.x + a.width &&
+       player.x + player.width > a.x &&
+       player.y < a.y + a.height &&
+       player.y + player.height > a.y){
+      if(!messagesUnlocked.includes(a.type)){
+        messagesUnlocked.push(a.type);
+        if(a.type==='secret'){
+          let pass=prompt('Enter secret password:');
+          if(pass==='love'){
+            document.getElementById('message').innerText=a.message;
+          }else{
+            document.getElementById('message').innerText='Wrong password 😢';
+          }
+        }else{
+          document.getElementById('message').innerText=a.message;
+        }
+      }
+    }
+  });
 }
 
+// Floating hearts
 function createHeart(){
-let heart=document.createElement('div');
-heart.classList.add('heart');
-heart.innerHTML='❤️';
-heart.style.left=Math.random()*100+'vw';
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),6000);
+  let heart=document.createElement('div');
+  heart.classList.add('heart');
+  heart.innerHTML='❤️';
+  heart.style.left=Math.random()*100+'vw';
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
 }
 setInterval(createHeart,400);
 
 function update(){
-if(keys['ArrowUp']) player.y-=player.speed;
-if(keys['ArrowDown']) player.y+=player.speed;
-if(keys['ArrowLeft']) player.x-=player.speed;
-if(keys['ArrowRight']) player.x+=player.speed;
+  if(keys['ArrowUp'] || keys['w']) player.y-=player.speed;
+  if(keys['ArrowDown'] || keys['s']) player.y+=player.speed;
+  if(keys['ArrowLeft'] || keys['a']) player.x-=player.speed;
+  if(keys['ArrowRight'] || keys['d']) player.x+=player.speed;
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
-drawAreas();
-drawPlayer();
-checkCollision();
-requestAnimationFrame(update);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  drawAreas();
+  drawPlayer();
+  checkCollision();
+  requestAnimationFrame(update);
 }
-
 update();
 </script>
 </body>
